@@ -41,6 +41,13 @@
         },
         "TAGS": []
     },
+    "AZURE": {
+        "SUBSCRIPTIONID": "AZ_SUBSCRIPTIONID",
+        "CLIENTID": "AZ_CLIENTID",
+        "PASSWORD": "AZ_PASSWORD",
+        "TENANTID": "AZ_TENANTID",
+        "TAGS": []
+    },
     "REPOSITORY": {
         "BASE_URL": "",
         "CREDENTIAL_ID": "jazz_repocreds",
