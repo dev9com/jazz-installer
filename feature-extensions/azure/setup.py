@@ -3,6 +3,7 @@ import json
 import os.path
 import subprocess
 import sys
+import urllib
 from collections import OrderedDict
 
 import click
@@ -110,9 +111,9 @@ def install(jazz_stackprefix, scm_repo, scm_username, scm_password, scm_pathext,
 
     print(
         colors.OKGREEN +
-        "Start to redeploy jazz_metrcis'.\n"
+        "Start to redeploy jazz_metrcis.\n"
         + colors.ENDC)
-    redeploy_metrics()
+    redeploy_metrics(scm_repo, scm_username, scm_password, scm_pathext)
 
 @main.command()
 @click.option('--jazz-stackprefix',
@@ -274,10 +275,10 @@ def getTerraformOutputVar(varname):
         print("Failed getting output variable {0} from terraform!".format(varname))
         sys.exit()
 
-def redeploy_metrics(scm_repo, scm_username, scm_password, scm_pathext):
-    metricsFolder = "module_metrcis"
+def redeploy_metrics(repo, username, password, pathext):
+    metricsFolder = "module_metrics"
     message = "add a blank character to README.md to trigger redeployment"
-    fileToUpdate = "jazz_metrics/README.md"
+    fileToUpdate = "README.md"
 
     subprocess.check_call(["rm", "-rf", metricsFolder])
     # Clone the SCM
@@ -296,13 +297,10 @@ def redeploy_metrics(scm_repo, scm_username, scm_password, scm_pathext):
             metricsFolder])
 
     # append a blank char into a filr
-    f = open(fileToUpdate, "a")
+    f = open("{}/{}".format(metricsFolder, fileToUpdate), "a")
     f.write(" ")
+    f.close()
 
-    # commit & push the changes to gitlab
-    subprocess.check_call(["git", "add", fileToUpdate], cwd=metricsFolder)
-    subprocess.check_call(["git", "commit", "-m", "'{}'".format(message)], cwd=metricsFolder)
-    subprocess.check_call(["git", "push", "-u", "origin", "master"], cwd=metricsFolder)
-    subprocess.check_call(["rm", "-rf", metricsFolder])
+    git_config.commit_git_config(metricsFolder, fileToUpdate, message)
 
 main()
